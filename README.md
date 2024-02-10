@@ -104,8 +104,49 @@ THEN  => System will show a deletion status message and delete relevant post
 
 ## **👪** Entities and Actors
 
-We want to see your perspective about these problems. You can define various types of entities or actors. One thing for sure, there is no
-true or false statement to define the entities. As long as the results are understandable, then go for it! 🚀
+```
+User
+- fullName: string
+- nim: string
+- faculty: string
+- major: string
+- username: string
+- email: string
+- password: string
+- role: string
+- commentedPosts: Array of Reference to Post
+- comments: Array of Reference to Comment
+- _id: ObjectId
+
+Candidate
+- user: Reference to User
+- posts: Array of Reference to Post
+- _id: ObjectId
+
+Post
+- caption: string
+- candidate: Reference to Candidate
+- comments: Array of Reference to Comment
+- _id: ObjectId
+
+Comment
+- caption: string
+- post: Reference to Post
+- user: Reference to User
+- _id: ObjectId
+
+Election
+- startDate: Date
+- endDate: Date
+- votes: Array of Reference to Vote
+- _id: ObjectId
+
+Vote
+- hashedUserId: string
+- candidate: Reference to Candidate
+- _id: ObjectId
+
+```
 
 ## **📘** References
 
@@ -148,7 +189,74 @@ The implementation of this project MUST be in the form of a REST, gRPC, or Graph
 
 ## **🧪** API Installation
 
-> Write how to run your service in local or development environment here. If you use Docker to serve your DBMS or your server, you will receive bonus points for your submission.
+**Tech Stack**
+
+Node.js, Express.js, MongoDB
+
+**Installation Guide**
+
+Clone the repo:
+
+```bash
+git clone --branch nugraha-billy-viandy https://github.com/ahargunyllib/freepass-2024.git
+cd freepass-2024
+```
+
+Install the dependencies:
+
+```bash
+npm install
+```
+
+Set the environment variables:
+
+```bash
+cp .env.example .env
+
+# open .env and modify the environment variables
+```
+
+The environment variables can be found and modified in the `.env` file. They come with these default values:
+
+```bash
+# Port number
+PORT=3000
+
+# URL of the Mongo DB
+MONGODB_URL=mongodb+srv://<username>:<password>@<hostname>/freepass2024?retryWrites=true&w=majority
+
+# JWT secret key
+JWT_SECRET=thisisasamplesecret
+# Number of minutes after which an access token expires
+JWT_ACCESS_EXPIRATION=30m
+```
+
+Running localy:
+```bash
+# Build the application
+npm run build
+
+# Start the application
+npm run start
+```
+
+Testing:
+```bash
+# Run all tests
+npm run test
+```
+
+Linting:
+```bash
+# Run ESlint
+npm run format
+```
+
+**API Documentation**
+
+To view the list of available APIs and their specifications, run the server and go to `http://localhost:3000/v1/docs` in your browser.
+
+
 
 ## **[📞](https://emojipedia.org/telephone-receiver)** Contact
 

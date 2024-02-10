@@ -1,0 +1,714 @@
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      tags:
+        - Auth
+      description: New user can register account to the system
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fullName:
+                  type: string
+                nim:
+                  type: string
+                faculty:
+                  type: string
+                major:
+                  type: string
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - fullName
+                - nim
+                - faculty
+                - major
+                - username
+                - email
+                - password
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: 'create user success. please login <username>'
+
+  /auth/login:
+    post:
+      summary: Authenticate user and obtain a token
+      tags:
+        - Auth
+      description: User can login to the system
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+                - username
+                - password
+      responses:
+        '200':
+          description: User logged in successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: 'login success'
+                  data:
+                    type: string
+                    example: '<JWT Token>'
+
+  /user/profile:
+    patch:
+      security:
+        - Bearer: []
+      summary: Update user details
+      tags:
+        - User
+      description: User can edit their profile account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fullName:
+                  type: string
+                nim:
+                  type: string
+                faculty:
+                  type: string
+                major:
+                  type: string
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: 'User update success'
+                  data:
+                    type: object
+                    properties:
+                      fullName:
+                        type: string
+                        example: 'John Doe'
+                      nim:
+                        type: string
+                        example: '123456'
+                      faculty:
+                        type: string
+                        example: 'Engineering'
+                      major:
+                        type: string
+                        example: 'Computer Science'
+                      username:
+                        type: string
+                        example: 'john_doe'
+                      email:
+                        type: string
+                        example: 'john@example.com'
+                      password:
+                        type: string
+                        example: 'hashed_password'
+
+  /candidate/{candidateId}/post:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - Post
+      description: User can view the candidate's posts
+      summary: View candidate's posts
+      parameters:
+        - name: candidateId
+          in: path
+          required: true
+          description: ID of the candidate
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Candidate's posts retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: "View candidate's posts success"
+                  data:
+                    type: object
+                    properties:
+                      posts:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Post'
+                      length:
+                        type: integer
+                        example: 3
+
+  /post/{postId}/comment:
+    post:
+      security:
+        - Bearer: []
+      summary: Create a comment on a post
+      tags:
+        - Comment
+      description: User can comment on candidate's posts
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          description: ID of the post
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+              required:
+                - content
+      responses:
+        '201':
+          description: Comment created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: 'Create comment success'
+
+  /candidate:
+    get:
+      summary: Get all candidates
+      security:
+        - Bearer: []
+      tags:
+        - Candidate
+      description: Users can view information about the candidates
+      responses:
+        '200':
+          description: Candidates retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: 'Get all candidates success'
+                  data:
+                    type: object
+                    properties:
+                      candidates:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Candidate'
+                      length:
+                        type: integer
+                        example: 3
+
+  /vote/{electionId}:
+    post:
+      summary: Create a vote for an election
+      security:
+        - Bearer: []
+      tags:
+        - Vote
+      description: Users can cast their votes for candidates during the specified election period
+      parameters:
+        - name: electionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                candidateId:
+                  type: string
+              required:
+                - candidateId
+      responses:
+        '201':
+          description: Vote created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: 'Create vote success'
+
+  /admin/{userId}:
+    post:
+      summary: Promote a user to candidate
+      security:
+        - Bearer: []
+      tags:
+        - User
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: ID of the user to be promoted
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User promoted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: 'User promote success'
+
+  /admin/election:
+    post:
+      summary: Create a new election
+      security:
+        - Bearer: []
+      requestBody:
+        required: true
+        tags:
+          - Election
+        description: Admin can set the start and end dates for the election period
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                startDate:
+                  type: string
+                  format: date-time
+                  description: Start date of the election
+                endDate:
+                  type: string
+                  format: date-time
+                  description: End date of the election
+              required:
+                - startDate
+                - endDate
+      responses:
+        '201':
+          description: Election created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: 'Create election success'
+
+  /admin/user/{userId}:
+    delete:
+      summary: Delete a user
+      security:
+        - Bearer: []
+      tags:
+        - User
+      description: Admin can delete the user/candidate
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: ID of the user to be deleted
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: 'Delete user success'
+
+  /admin/post/{postId}:
+    delete:
+      summary: Delete a post
+      security:
+        - Bearer: []
+      tags:
+        - Post
+      description: Admin can delete the candidate's posts
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          description: ID of the post to be deleted
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Post deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: 'Delete post success'
+
+  /admin/comment/{commentId}:
+    delete:
+      summary: Delete a comment
+      security:
+        - Bearer: []
+      tags:
+        - Comment
+      description: Admin can delete user comment
+      parameters:
+        - name: commentId
+          in: path
+          required: true
+          description: ID of the comment to be deleted
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Comment deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: 'Delete comment success'
+
+  /post:
+    post:
+      summary: Create a new post
+      security:
+        - Bearer: []
+      tags:
+        - Post
+      description: Candidate can create a post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                caption:
+                  type: string
+              required:
+                - caption
+      responses:
+        '201':
+          description: Post created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: 'Create post success'
+
+  /post/{postId}:
+    patch:
+      summary: Update a post
+      security:
+        - Bearer: []
+      tags:
+        - Post
+      description: Candidate can update a post
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          description: ID of the post to be updated
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                caption:
+                  type: string
+              required:
+                - caption
+      responses:
+        '200':
+          description: Post updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: 'Update post success'
+
+    delete:
+      summary: Delete a post
+      security:
+        - Bearer: []
+      tags:
+        - Post
+      description: Candidate can delete a post
+      parameters:
+        - name: postId
+          in: path
+          required: true
+          description: ID of the post to be deleted
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Post deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: 'Delete post success'
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          description: User ID
+        fullName:
+          type: string
+          description: Full name of the user
+        nim:
+          type: string
+          description: User's identification (e.g., student ID)
+        faculty:
+          type: string
+          description: User's faculty
+        major:
+          type: string
+          description: User's major
+        username:
+          type: string
+          description: User's unique username
+        email:
+          type: string
+          format: email
+          description: User's unique email address
+        role:
+          type: string
+          description: User's role
+        commentedPosts:
+          type: array
+          items:
+            type: string
+            description: ID of a commented post
+        comments:
+          type: array
+          items:
+            type: string
+            description: ID of a comment
+      required:
+        - fullName
+        - nim
+        - faculty
+        - major
+        - username
+        - email
+        - password
+
+    Candidate:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Candidate ID
+        user:
+          $ref: '#/components/schemas/User'
+          description: Reference to the associated user
+        posts:
+          type: array
+          items:
+            type: string
+            description: ID of a post associated with the candidate
+      required:
+        - user
+
+    Post:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Post ID
+        candidate:
+          $ref: '#/components/schemas/Candidate'
+          description: Reference to the candidate who created the post
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+            description: List of comments associated with the post
+      required:
+        - caption
+        - candidate
+
+    Comment:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Comment ID
+        caption:
+          type: string
+          description: Caption of the comment
+        user:
+          $ref: '#/components/schemas/User'
+          description: Reference to the user who made the comment
+        post:
+          $ref: '#/components/schemas/Post'
+          description: Reference to the post associated with the comment
+      required:
+        - caption
+        - post
+        - user
+
+    Election:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Election ID
+        startDate:
+          type: string
+          format: date-time
+          description: Start date and time of the election
+        endDate:
+          type: string
+          format: date-time
+          description: End date and time of the election
+        votes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Vote'
+            description: List of votes associated with the election
+      required:
+        - startDate
+        - endDate
+
+    Vote:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Vote ID
+        hashedUserId:
+          type: string
+          description: Hashed user ID
+        candidate:
+          $ref: '#/components/schemas/Candidate'
+          description: Reference to the candidate who received the vote
